@@ -16,6 +16,8 @@ public class Device {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private State state;
+
+    @Column(updatable = false, nullable = false)
     private long creationTime;
 
     public Device(String name, String brand, State state, long creationTime) {
