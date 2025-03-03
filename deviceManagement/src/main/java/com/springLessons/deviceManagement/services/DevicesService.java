@@ -3,7 +3,9 @@ package com.springLessons.deviceManagement.services;
 import com.springLessons.deviceManagement.databaseEntities.Device;
 import com.springLessons.deviceManagement.databaseEntities.State;
 import com.springLessons.deviceManagement.repositories.DevicesRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -20,8 +22,7 @@ public class DevicesService {
         return devicesRepository.save(device);
     }
 
-    public Device updateDevice(long deviceId, Device device){
-        device.setId(deviceId);
+    public Device updateDevice(Device device){
         return devicesRepository.save(device);
     }
 
@@ -37,8 +38,12 @@ public class DevicesService {
         return devicesRepository.findByBrand(brand);
     }
 
-    public List<Device> getAllByState(State state){
-        return devicesRepository.findByState(state);
+    public List<Device> getAllByState(String state){
+        State stateEnum = State.valueOf(state);
+        if(stateEnum == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid state "+state);
+        }
+        return devicesRepository.findByState(stateEnum);
     }
 
     public void deleteDevice(long deviceId){
