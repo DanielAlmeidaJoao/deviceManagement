@@ -22,7 +22,14 @@ public class DevicesService {
         return devicesRepository.save(device);
     }
 
-    public Device updateDevice(Device device){
+    public Device updateDevice(Device device) {
+        Device originalDevice = devicesRepository.findById(device.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown device: " + device.getId()));
+
+        if ((originalDevice.getName().equals(device.getName()) || originalDevice.getBrand().equals(device.getBrand())) && State.IN_USE.compareTo(originalDevice.getState()) == 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Name and brand can not be updated if the device is 'IN_USE' state");
+        }
+
         return devicesRepository.save(device);
     }
 
