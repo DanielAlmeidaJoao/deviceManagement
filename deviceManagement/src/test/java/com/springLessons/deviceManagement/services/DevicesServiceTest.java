@@ -10,7 +10,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,9 +25,12 @@ class DevicesServiceTest {
     @Autowired
     private DevicesService devicesService;
 
+    private Device getTestDevice(State state){
+        return new Device("nameTest","nameBrand", state,System.currentTimeMillis());
+    }
     @Test
     void testCreate() {
-        Device device = new Device("nameTest","nameBrand", State.AVAILABLE,System.currentTimeMillis());
+        Device device = getTestDevice(State.IN_USE);
         Device createdDevice = devicesService.create(device);
 
         assertTrue( device.getId() > 0);
@@ -59,7 +65,34 @@ class DevicesServiceTest {
     }
 
     @Test
-    void updateDevice() {
+    void update_name_brand_of_available_device() {
+        Device device = getTestDevice(State.AVAILABLE);
+        Device createdDevice = devicesService.create(device);
+        createdDevice.setName("DEVICE_2");
+        createdDevice.setBrand("BRAND_2");
+        createdDevice.setState(State.IN_USE);
+
+        Device updatedDevice = devicesService.updateDevice(createdDevice);
+
+        assertEquals(createdDevice.getId(),updatedDevice.getId());
+        assertEquals(createdDevice.getName(),updatedDevice.getName());
+        assertEquals(createdDevice.getBrand(),updatedDevice.getBrand());
+        assertEquals(createdDevice.getState(),updatedDevice.getState());
+    }
+
+    @Test
+    void fails_to_update_name_brand_of_inUse_device() {
+        Device device = getTestDevice(State.IN_USE);
+        Device createdDevice = devicesService.create(device);
+        createdDevice.setName("DEVICE_2");
+        createdDevice.setBrand("BRAND_2");
+
+        try{
+            devicesService.updateDevice(createdDevice);
+            assertTrue(false);
+        }catch (ResponseStatusException e){
+            assertEquals(e.getStatusCode(), HttpStatus.CONFLICT);
+        }
     }
 
     @Test
