@@ -19,4 +19,66 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class DevicesServiceTest {
 
+    @Autowired
+    private DevicesService devicesService;
+
+    @Test
+    void testCreate() {
+        Device device = new Device("nameTest","nameBrand", State.AVAILABLE,System.currentTimeMillis());
+        Device createdDevice = devicesService.create(device);
+
+        assertTrue( device.getId() > 0);
+        assertEquals( device.getName(),createdDevice.getName());
+        assertEquals( device.getBrand(),createdDevice.getBrand());
+        assertEquals( device.getState(),createdDevice.getState());
+    }
+
+
+    @Test
+    void testCreate_WithAvailableState() {
+        Device device = new Device("nameTest","nameBrand", State.AVAILABLE,System.currentTimeMillis());
+        Device createdDevice = devicesService.create(device);
+
+        assertEquals( device.getState(),createdDevice.getState());
+    }
+
+    @Test
+    void testCreate_WithInUseState() {
+        Device device = new Device("nameTest","nameBrand", State.IN_USE,System.currentTimeMillis());
+        Device createdDevice = devicesService.create(device);
+
+        assertEquals( device.getState(),createdDevice.getState());
+    }
+
+    @Test
+    void testCreate_WithInactiveState() {
+        Device device = new Device("nameTest","nameBrand", State.INACTIVE,System.currentTimeMillis());
+        Device createdDevice = devicesService.create(device);
+
+        assertEquals( device.getState(),createdDevice.getState());
+    }
+
+    @Test
+    void updateDevice() {
+    }
+
+    @Test
+    void getDeviceById() {
+    }
+
+    @Test
+    void getAll() {
+    }
+
+    @Test
+    void getAllByBrand() {
+    }
+
+    @Test
+    void getAllByState() {
+    }
+
+    @Test
+    void deleteDevice() {
+    }
 }
