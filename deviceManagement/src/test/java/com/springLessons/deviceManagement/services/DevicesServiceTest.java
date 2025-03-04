@@ -2,16 +2,11 @@ package com.springLessons.deviceManagement.services;
 
 import com.springLessons.deviceManagement.databaseEntities.Device;
 import com.springLessons.deviceManagement.databaseEntities.State;
-import com.springLessons.deviceManagement.repositories.DevicesRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,7 +21,7 @@ class DevicesServiceTest {
     private DevicesService devicesService;
 
     private Device getTestDevice(State state){
-        return new Device("nameTest","nameBrand", state,System.currentTimeMillis());
+        return new Device("nameTest","nameBrand", state);
     }
     @Test
     void testCreate() {
@@ -42,7 +37,7 @@ class DevicesServiceTest {
 
     @Test
     void testCreate_WithAvailableState() {
-        Device device = new Device("nameTest","nameBrand", State.AVAILABLE,System.currentTimeMillis());
+        Device device = new Device("nameTest","nameBrand", State.AVAILABLE);
         Device createdDevice = devicesService.create(device);
 
         assertEquals( device.getState(),createdDevice.getState());
@@ -50,7 +45,7 @@ class DevicesServiceTest {
 
     @Test
     void testCreate_WithInUseState() {
-        Device device = new Device("nameTest","nameBrand", State.IN_USE,System.currentTimeMillis());
+        Device device = new Device("nameTest","nameBrand", State.IN_USE);
         Device createdDevice = devicesService.create(device);
 
         assertEquals( device.getState(),createdDevice.getState());
@@ -58,7 +53,7 @@ class DevicesServiceTest {
 
     @Test
     void testCreate_WithInactiveState() {
-        Device device = new Device("nameTest","nameBrand", State.INACTIVE,System.currentTimeMillis());
+        Device device = new Device("nameTest","nameBrand", State.INACTIVE);
         Device createdDevice = devicesService.create(device);
 
         assertEquals( device.getState(),createdDevice.getState());

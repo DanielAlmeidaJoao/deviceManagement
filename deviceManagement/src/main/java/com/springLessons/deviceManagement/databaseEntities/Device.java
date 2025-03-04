@@ -2,6 +2,9 @@ package com.springLessons.deviceManagement.databaseEntities;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Devices")
@@ -18,14 +21,14 @@ public class Device {
     @Column(nullable = false)
     private State state;
 
+    @CreationTimestamp
     @Column(updatable = false, nullable = false)
-    private long creationTime;
+    private LocalDateTime creationTime;
 
-    public Device(String name, String brand, State state, long creationTime) {
+    public Device(String name, String brand, State state) {
         this.name = name;
         this.brand = brand;
         this.state = state;
-        this.creationTime = creationTime;
     }
 
     public Long getId() {
@@ -60,11 +63,11 @@ public class Device {
         this.state = state;
     }
 
-    public long getCreationTime() {
+    public LocalDateTime getCreationTime() {
         return creationTime;
     }
 
-    public void setCreationTime(long creationTime) {
+    public void setCreationTime(LocalDateTime creationTime) {
         this.creationTime = creationTime;
     }
 
