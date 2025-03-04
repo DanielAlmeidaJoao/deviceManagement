@@ -10,6 +10,7 @@ docker exec -it <container_name_or_id> /bin/bash
 docker exec -it <container_name_or_id> /bin/sh
 
 ./mvnw clean package -Dmaven.test.skip=true
+./mvnw test -Dspring.profiles.active=test
 
 sudo docker compose up -d --build --force-recreate
 sudo docker compose up --build --force-recreate

@@ -1,6 +1,7 @@
 package com.springLessons.deviceManagement.databaseEntities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "Devices")
