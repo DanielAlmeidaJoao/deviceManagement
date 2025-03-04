@@ -66,6 +66,8 @@ class DevicesServiceTest {
 
     @Test
     void update_name_brand_of_available_device() {
+        //TODO use the library that allows to pass test parameters
+        // for update in available
         Device device = getTestDevice(State.AVAILABLE);
         Device createdDevice = devicesService.create(device);
         createdDevice.setName("DEVICE_2");
