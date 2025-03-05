@@ -1,6 +1,7 @@
 package com.springLessons.deviceManagement.dtos;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.springLessons.deviceManagement.databaseEntities.Device;
 import com.springLessons.deviceManagement.databaseEntities.State;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
@@ -19,5 +20,11 @@ public class UpdateDTO extends CreateDTO{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Device updateDTOToDeviceMapper(){
+        Device device = super.createDTOToDevice();
+        device.setId(this.id);
+        return device;
     }
 }

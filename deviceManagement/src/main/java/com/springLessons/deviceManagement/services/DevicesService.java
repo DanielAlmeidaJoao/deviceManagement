@@ -2,6 +2,8 @@ package com.springLessons.deviceManagement.services;
 
 import com.springLessons.deviceManagement.databaseEntities.Device;
 import com.springLessons.deviceManagement.databaseEntities.State;
+import com.springLessons.deviceManagement.dtos.CreateDTO;
+import com.springLessons.deviceManagement.dtos.UpdateDTO;
 import com.springLessons.deviceManagement.repositories.DevicesRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,14 +20,14 @@ public class DevicesService {
         this.devicesRepository = devicesRepository;
     }
 
-    public Device create(Device device){
-        return devicesRepository.save(device);
+    public Device create(CreateDTO device){
+        return devicesRepository.save(device.createDTOToDevice());
     }
 
-    private boolean updatesNameOrBrand(Device update, Device originalDevice){
+    private boolean updatesNameOrBrand(UpdateDTO update, Device originalDevice){
         return !(originalDevice.getName().equals(update.getName()) && originalDevice.getBrand().equals(update.getBrand()));
     }
-    public Device updateDevice(Device device) {
+    public Device updateDevice(UpdateDTO device) {
         Device originalDevice = devicesRepository.findById(device.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown device: " + device.getId()));
 
@@ -33,7 +35,7 @@ public class DevicesService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Name and brand can not be updated if the device is 'IN_USE' state");
         }
 
-        return devicesRepository.save(device);
+        return devicesRepository.save(device.updateDTOToDeviceMapper());
     }
 
     public Device getDeviceById(long id){

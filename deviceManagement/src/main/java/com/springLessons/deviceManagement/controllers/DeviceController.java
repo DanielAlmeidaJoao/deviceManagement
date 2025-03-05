@@ -1,6 +1,8 @@
 package com.springLessons.deviceManagement.controllers;
 
 import com.springLessons.deviceManagement.databaseEntities.Device;
+import com.springLessons.deviceManagement.dtos.CreateDTO;
+import com.springLessons.deviceManagement.dtos.UpdateDTO;
 import com.springLessons.deviceManagement.services.DevicesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +17,12 @@ public class DeviceController {
     private DevicesService devicesService;
 
     @PostMapping
-    public Device createDevice(@RequestBody Device device) {
+    public Device createDevice(@RequestBody CreateDTO device) {
         return devicesService.create(device);
     }
 
     @PutMapping
-    public Device updateDevice(@RequestBody Device device) {
+    public Device updateDevice(@RequestBody UpdateDTO device) {
         return devicesService.updateDevice(device);
     }
 

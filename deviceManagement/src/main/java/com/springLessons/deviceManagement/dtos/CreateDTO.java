@@ -1,5 +1,6 @@
 package com.springLessons.deviceManagement.dtos;
 
+import com.springLessons.deviceManagement.databaseEntities.Device;
 import com.springLessons.deviceManagement.databaseEntities.State;
 
 public class CreateDTO {
@@ -30,5 +31,13 @@ public class CreateDTO {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public Device createDTOToDevice(){
+        Device device = new Device();
+        device.setName(this.getName());
+        device.setBrand(this.getBrand());
+        device.setState(this.getState());
+        return device;
     }
 }
