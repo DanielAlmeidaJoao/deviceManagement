@@ -208,6 +208,16 @@ class DevicesServiceTest {
     }
 
     @Test
-    void deleteDevice() {
+    void fails_deleteDevice() {
+        CreateDTO device = getTestCreateDTO(State.IN_USE);
+
+        Device createdDevice = devicesService.create(device);
+
+        try{
+            devicesService.deleteDevice(createdDevice.getId());
+            assertTrue(false);
+        }catch (ResponseStatusException e){
+            assertEquals(e.getStatusCode(), HttpStatus.CONFLICT);
+        }
     }
 }
