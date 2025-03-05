@@ -2,6 +2,8 @@ package com.springLessons.deviceManagement.services;
 
 import com.springLessons.deviceManagement.databaseEntities.Device;
 import com.springLessons.deviceManagement.databaseEntities.State;
+import com.springLessons.deviceManagement.dtos.CreateDTO;
+import com.springLessons.deviceManagement.dtos.UpdateDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,53 +25,88 @@ class DevicesServiceTest {
     private Device getTestDevice(State state){
         return new Device("nameTest","nameBrand", state);
     }
+
+    private CreateDTO getTestCreateDTO(State state){
+        CreateDTO createDTO = new CreateDTO();
+        createDTO.setBrand("BRAND_2");
+        createDTO.setName("NAME_2");
+        createDTO.setState(state);
+        return createDTO;
+    }
+
+    private UpdateDTO getTestUpdateDTO(State state, Device device){
+        UpdateDTO updateDTO = new UpdateDTO();
+        updateDTO.setBrand(device.getBrand());
+        updateDTO.setName(device.getName());
+        updateDTO.setState(state);
+        updateDTO.setId(device.getId());
+        return updateDTO;
+    }
+
+    private UpdateDTO getUnknownIdTestUpdateDTO(State state){
+        UpdateDTO updateDTO = new UpdateDTO();
+        updateDTO.setBrand("BRAND_3");
+        updateDTO.setName("NAME_3");
+        updateDTO.setState(state);
+        updateDTO.setId(-1L);
+        return updateDTO;
+    }
+
     @Test
     void testCreate() {
-        Device device = getTestDevice(State.IN_USE);
-        Device createdDevice = devicesService.create(device);
+        CreateDTO createDeviceDTO = getTestCreateDTO(State.IN_USE);
+        Device createdDevice = devicesService.create(createDeviceDTO);
 
-        assertTrue( device.getId() > 0);
-        assertEquals( device.getName(),createdDevice.getName());
-        assertEquals( device.getBrand(),createdDevice.getBrand());
-        assertEquals( device.getState(),createdDevice.getState());
+        assertTrue( createdDevice.getId() > 0);
+        assertEquals( createDeviceDTO.getName(),createdDevice.getName());
+        assertEquals( createDeviceDTO.getBrand(),createdDevice.getBrand());
+        assertEquals( createDeviceDTO.getState(),createdDevice.getState());
     }
 
 
     @Test
     void testCreate_WithAvailableState() {
-        Device device = new Device("nameTest","nameBrand", State.AVAILABLE);
-        Device createdDevice = devicesService.create(device);
+        CreateDTO createDeviceDTO = getTestCreateDTO(State.AVAILABLE);
+        Device createdDevice = devicesService.create(createDeviceDTO);
 
-        assertEquals( device.getState(),createdDevice.getState());
+        assertEquals( createDeviceDTO.getState(),createdDevice.getState());
     }
 
     @Test
     void testCreate_WithInUseState() {
-        Device device = new Device("nameTest","nameBrand", State.IN_USE);
-        Device createdDevice = devicesService.create(device);
+        CreateDTO createDeviceDTO = getTestCreateDTO(State.IN_USE);
 
-        assertEquals( device.getState(),createdDevice.getState());
+        Device createResponse = devicesService.create(createDeviceDTO);
+
+        Device createdDevice = devicesService.getDeviceById(createResponse.getId());
+
+        assertEquals( createDeviceDTO.getState(),createdDevice.getState());
     }
 
     @Test
     void testCreate_WithInactiveState() {
-        Device device = new Device("nameTest","nameBrand", State.INACTIVE);
-        Device createdDevice = devicesService.create(device);
+        CreateDTO createDeviceDTO = getTestCreateDTO(State.INACTIVE);
 
-        assertEquals( device.getState(),createdDevice.getState());
+        Device createResponse = devicesService.create(createDeviceDTO);
+
+        Device createdDevice = devicesService.getDeviceById(createResponse.getId());
+
+        assertEquals( createDeviceDTO.getState(),createdDevice.getState());
     }
 
     @Test
     void update_name_brand_of_available_device() {
         //TODO use the library that allows to pass test parameters
         // for update in available
-        Device device = getTestDevice(State.AVAILABLE);
-        Device createdDevice = devicesService.create(device);
+        CreateDTO createDTO = getTestCreateDTO(State.AVAILABLE);
+
+        Device createdDevice = devicesService.create(createDTO);
         createdDevice.setName("DEVICE_2");
         createdDevice.setBrand("BRAND_2");
         createdDevice.setState(State.IN_USE);
 
-        Device updatedDevice = devicesService.updateDevice(createdDevice);
+        UpdateDTO updateDTO = getTestUpdateDTO(State.IN_USE,createdDevice);
+        Device updatedDevice = devicesService.updateDevice(updateDTO);
 
         assertEquals(createdDevice.getId(),updatedDevice.getId());
         assertEquals(createdDevice.getName(),updatedDevice.getName());
@@ -79,13 +116,16 @@ class DevicesServiceTest {
 
     @Test
     void fails_to_update_name_brand_of_inUse_device() {
-        Device device = getTestDevice(State.IN_USE);
+        CreateDTO device = getTestCreateDTO(State.IN_USE);
+
         Device createdDevice = devicesService.create(device);
-        createdDevice.setName("DEVICE_2");
-        createdDevice.setBrand("BRAND_2");
+
+        UpdateDTO updateDTO = getTestUpdateDTO(State.IN_USE,createdDevice);
+        updateDTO.setName("DEVICE__NEW");
+        updateDTO.setBrand("BRAND__NEW");
 
         try{
-            devicesService.updateDevice(createdDevice);
+            devicesService.updateDevice(updateDTO);
             assertTrue(false);
         }catch (ResponseStatusException e){
             assertEquals(e.getStatusCode(), HttpStatus.CONFLICT);
