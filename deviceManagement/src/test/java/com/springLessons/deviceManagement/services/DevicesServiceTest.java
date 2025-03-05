@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,8 +32,8 @@ class DevicesServiceTest {
 
     private CreateDTO getTestCreateDTO(State state){
         CreateDTO createDTO = new CreateDTO();
-        createDTO.setBrand("BRAND_2");
-        createDTO.setName("NAME_2");
+        createDTO.setBrand("BRAND_2" + System.currentTimeMillis());
+        createDTO.setName("NAME_2" + System.currentTimeMillis());
         createDTO.setState(state);
         return createDTO;
     }
@@ -150,6 +152,24 @@ class DevicesServiceTest {
 
     @Test
     void getAll() {
+        int MAX_DEVICES = 10;
+        Map<Long,Device> createdDevices = new HashMap<>();
+        for (int i = 0; i < MAX_DEVICES; i++) {
+            CreateDTO createDTO = getTestCreateDTO(State.AVAILABLE);
+            Device createResponse = devicesService.create(createDTO);
+            createdDevices.put(createResponse.getId(),createResponse);
+        }
+
+        List<Device> fetchedDevices = devicesService.getAll();
+
+        assertTrue(MAX_DEVICES == createdDevices.size() && createdDevices.size() == fetchedDevices.size());
+        fetchedDevices.forEach(device -> {
+            Device chachedDevice = createdDevices.get(device.getId());
+            assertEquals(chachedDevice.getId(),device.getId());
+            assertEquals(chachedDevice.getName(),device.getName());
+            assertEquals(chachedDevice.getBrand(),device.getBrand());
+            assertEquals(chachedDevice.getState(),device.getState());
+        });
     }
 
     @Test
