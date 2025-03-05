@@ -220,4 +220,30 @@ class DevicesServiceTest {
             assertEquals(e.getStatusCode(), HttpStatus.CONFLICT);
         }
     }
+
+    @Test
+    void success_deleteDevice() {
+        CreateDTO device = getTestCreateDTO(State.AVAILABLE);
+
+        Device availableDevice = devicesService.create(getTestCreateDTO(State.AVAILABLE));
+        Device inactiveDevice = devicesService.create(getTestCreateDTO(State.INACTIVE));
+
+        devicesService.deleteDevice(availableDevice.getId());
+        devicesService.deleteDevice(inactiveDevice.getId());
+
+
+        try{
+            devicesService.getDeviceById(availableDevice.getId());
+            assertTrue(false);
+        }catch (ResponseStatusException e){
+            assertEquals(e.getStatusCode(), HttpStatus.NOT_FOUND);
+        }
+
+        try{
+            devicesService.getDeviceById(inactiveDevice.getId());
+            assertTrue(false);
+        }catch (ResponseStatusException e){
+            assertEquals(e.getStatusCode(), HttpStatus.NOT_FOUND);
+        }
+    }
 }
