@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -134,6 +136,16 @@ class DevicesServiceTest {
 
     @Test
     void getDeviceById() {
+        CreateDTO createDTO = getTestCreateDTO(State.AVAILABLE);
+
+        Device createDeviceResponse = devicesService.create(createDTO);
+
+        Device justCreatedDevice = devicesService.getDeviceById(createDeviceResponse.getId());
+
+        assertEquals(createDeviceResponse.getId(),justCreatedDevice.getId());
+        assertEquals(createDeviceResponse.getName(),justCreatedDevice.getName());
+        assertEquals(createDeviceResponse.getBrand(),justCreatedDevice.getBrand());
+        assertEquals(createDeviceResponse.getState(),justCreatedDevice.getState());
     }
 
     @Test
