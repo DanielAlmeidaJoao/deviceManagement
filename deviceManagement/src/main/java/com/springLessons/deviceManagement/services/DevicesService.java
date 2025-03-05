@@ -59,6 +59,12 @@ public class DevicesService {
     }
 
     public void deleteDevice(long deviceId){
+        Device originalDevice = devicesRepository.findById(deviceId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown device: " + deviceId));
+
+        if (State.IN_USE.compareTo(originalDevice.getState()) == 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "IN_USE devices cannot be deleted");
+        }
         devicesRepository.deleteById(deviceId);
     }
 }
