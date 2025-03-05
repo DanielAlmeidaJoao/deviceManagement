@@ -176,6 +176,31 @@ class DevicesServiceTest {
 
     @Test
     void getAllByBrand() {
+        String best_brand = "BEST_BRAND";
+        int countBestBrand = 0;
+        int MAX_DEVICES = 10;
+        Map<Long,Device> createdDevices = new HashMap<>();
+        for (int i = 0; i < MAX_DEVICES; i++) {
+            CreateDTO createDTO = getTestCreateDTO(State.AVAILABLE);
+            if(i % 2 == 0) {
+                createDTO.setBrand(best_brand);
+                countBestBrand++;
+            }
+            Device createResponse = devicesService.create(createDTO);
+            createdDevices.put(createResponse.getId(),createResponse);
+        }
+
+        List<Device> fetchedDevices = devicesService.getAllByBrand(best_brand);
+
+        assertTrue(countBestBrand < createdDevices.size());
+        assertTrue(countBestBrand == fetchedDevices.size());
+        fetchedDevices.forEach(device -> {
+            Device chachedDevice = createdDevices.get(device.getId());
+            assertEquals(chachedDevice.getId(),device.getId());
+            assertEquals(chachedDevice.getName(),device.getName());
+            assertEquals(chachedDevice.getBrand(),device.getBrand());
+            assertEquals(chachedDevice.getState(),device.getState());
+        });
     }
 
     @Test
