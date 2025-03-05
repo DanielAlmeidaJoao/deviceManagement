@@ -39,7 +39,7 @@ public class DevicesService {
     }
 
     public Device getDeviceById(long id){
-        return devicesRepository.findById(id).orElse(null);
+        return devicesRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown device: " + id));
     }
 
     public List<Device> getAll(){
