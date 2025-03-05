@@ -4,6 +4,7 @@ import com.springLessons.deviceManagement.databaseEntities.Device;
 import com.springLessons.deviceManagement.databaseEntities.State;
 import com.springLessons.deviceManagement.dtos.CreateDTO;
 import com.springLessons.deviceManagement.dtos.UpdateDTO;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Transactional
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Import(DevicesService.class)
 @SpringBootTest
